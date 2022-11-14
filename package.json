@@ -1,0 +1,19 @@
+{
+  "name": "alpha-components-ant",
+  "version": "0.1.0",
+  "description": "custom components based on ant-design-vue 3.x",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.dqalpha.com/zhengchangrong/alpha-components-ant.git"
+  },
+  "author": "ron",
+  "license": "ISC",
+  "dependencies": {
+    "ant-design-vue": "^3.2.15",
+    "vue": "^3.2.45"
+  }
+}
