@@ -3,8 +3,8 @@
 基于ant design vue封装的组件
 
 # 当前依赖
-ant-design-vue v3.2.x
-vue v3.2.x
+1. ant-design-vue v3.2.x
+2. vue v3.2.x
 
 # 使用方法
 (简陋,待改进)clone这个项目,把需要用到的组件的顶级文件夹复制粘贴到你的项目中即可
