@@ -5,6 +5,7 @@
 # 当前依赖
 1. ant-design-vue v3.2.x
 2. vue v3.2.x
+3. uuid v9.0.0
 
 # 使用方法
 1. 确保项目开启了JSX支持   
@@ -17,6 +18,7 @@ plugins: [
   vueJsx()
 ]
 ````
+2. 引入依赖ant-design-vue v3.2.x, vue v3.2.x, uuid v9.0.x
 2. (简陋,待改进)clone这个项目,把需要用到的组件的顶级文件夹复制粘贴到你的项目中即可
 
 # 版本记录

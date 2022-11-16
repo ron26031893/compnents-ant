@@ -1,9 +1,9 @@
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import type { PropType, Ref, ComputedRef} from "vue";
-import { message, Table as ATable, TableProps, type TablePaginationConfig } from "ant-design-vue";
-import { usePaginationConfig } from "./hooks/tableHooks";
-import { deepClone } from "./utils/helper";
-import { v4 as uuidv4 } from "uuid";
+import { computed, defineComponent, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
+import type { PropType, Ref, ComputedRef } from 'vue';
+import { message, Table as ATable, TableProps, type TablePaginationConfig } from 'ant-design-vue';
+import { usePaginationConfig } from './hooks/tableHooks';
+import { deepClone } from './utils/helper';
+import { v4 as uuidv4 } from 'uuid';
 interface ScrollConfig {
 	x: number | string | true | undefined;
 	y: number | string | undefined;
@@ -13,8 +13,11 @@ interface ScrollConfig {
 export interface TableConfig {
 	rowKey: string;
 	whereis?: string | string[];
-	fetchTableData: ((queryParams: Object | undefined, additionalParam?: any) => Promise<any>) | undefined | null;
-	paginationSize?: "small";
+	fetchTableData:
+		| ((queryParams: Object | undefined, additionalParam?: any) => Promise<any>)
+		| undefined
+		| null;
+	paginationSize?: 'small';
 	pageSizeOptions?: string[];
 	additionalParam?: any;
 	queryParams?: { [key: string]: any };
@@ -47,7 +50,7 @@ function printDir(...arg): void {
 }
 
 export default defineComponent({
-	name: "AlphaTable",
+	name: 'AlphaTable',
 	props: {
 		columns: {
 			type: Array,
@@ -58,12 +61,15 @@ export default defineComponent({
 			required: true,
 		},
 	},
-	emits: ["afterDataFetched"],
+	emits: ['afterDataFetched'],
 	setup(props, { attrs, slots, emit, expose }) {
 		const uuid = uuidv4();
 		const tableMatirials = {
 			dataSource: ref<any[]>([]),
-			pagination: usePaginationConfig(props.tableConfig.paginationSize, props.tableConfig.pageSizeOptions),
+			pagination: usePaginationConfig(
+				props.tableConfig.paginationSize,
+				props.tableConfig.pageSizeOptions
+			),
 			columns: computed<any[]>(() => {
 				return props.columns;
 			}),
@@ -81,7 +87,7 @@ export default defineComponent({
 				result.customOnChange = result.onChange;
 				result.onChange = function (selectedRowKeys, selectedRows) {
 					result.selectedRowKeys.value = selectedRowKeys;
-					if (result.customOnChange && typeof result.customOnChange === "function") {
+					if (result.customOnChange && typeof result.customOnChange === 'function') {
 						result.customOnChange(selectedRowKeys, selectedRows);
 					}
 				};
@@ -103,17 +109,19 @@ export default defineComponent({
 				return result;
 			}
 			if (adapting) {
-				console.log("adapting, adapt aborted");
+				console.log('adapting, adapt aborted');
 				return;
 			}
 			adapting = true;
-			const antTableCellHeight = document.querySelectorAll(`[id='${uuid}'] .ant-table-cell`)?.[0]?.clientHeight || 57;
+			const antTableCellHeight = document.querySelectorAll(`[id='${uuid}'] .ant-table-cell`)[0].clientHeight;
 			const totalHeight = dataLength * antTableCellHeight; //表格每一行的高度是antTableCellHeight
 			if (table.value && totalHeight) {
 				const parentNode = table.value.parentNode;
 				const parentComputedStyle = window.getComputedStyle(parentNode);
 				const parentPaddingTop = Number(parentComputedStyle.paddingTop.match(/[0-9]+/g)?.[0] || 0);
-				const parentPaddingBottom = Number(parentComputedStyle.paddingBottom.match(/[0-9]+/g)?.[0] || 0);
+				const parentPaddingBottom = Number(
+					parentComputedStyle.paddingBottom.match(/[0-9]+/g)?.[0] || 0
+				);
 				const parentClientHeight = parentNode.clientHeight - parentPaddingBottom - parentPaddingTop;
 				const children: HTMLElement[] = Array.from(parentNode.children);
 				const childrenHeight = children.reduce((accumulator, v) => {
@@ -146,35 +154,35 @@ export default defineComponent({
 			tableMatirials: TableMatirials
 		): Promise<any> {
 			if (!tableConfig.fetchTableData) {
-				return Promise.reject("未传递获取表格数据API调用函数");
+				return Promise.reject('未传递获取表格数据API调用函数');
 			}
 			const { fetchTableData, queryParams, additionalParam, before, after } = tableConfig;
 			const { tableLoading, dataSource, pagination, scrollConfig } = tableMatirials;
 			tableLoading.value = true;
 			return fetchTableData({ ...queryParams, current, pageSize }, additionalParam)
 				.then((response) => {
-					const whereis = props.tableConfig.whereis || "rows";
+					const whereis = props.tableConfig.whereis || 'rows';
 					pagination.value.current = current;
 					pagination.value.pageSize = pageSize;
 					pagination.value.total = response.total;
 					let tableData;
 					if (whereis) {
-						if (typeof whereis === "object" && whereis instanceof Array) {
+						if (typeof whereis === 'object' && whereis instanceof Array) {
 							tableData = whereis.reduce((lastLayer, curKey) => {
 								if (lastLayer) {
 									return lastLayer[curKey];
 								}
 								return undefined;
 							}, response);
-						} else if (typeof whereis === "string") {
+						} else if (typeof whereis === 'string') {
 							tableData = response[whereis];
 						}
 					} else {
-						tableData = response["rows"];
+						tableData = response['rows'];
 					}
 
 					if (!tableData) {
-						console.error(`AlphaTable: 无法从指定位置(${whereis || "rows"})找到列表数据`);
+						console.error(`AlphaTable: 无法从指定位置(${whereis || 'rows'})找到列表数据`);
 						tableLoading.value = false;
 						return;
 					}
@@ -210,14 +218,16 @@ export default defineComponent({
 				props.tableConfig,
 				tableMatirials
 			).then((tableData) => {
-				emit("afterDataFetched", deepClone(tableData));
+				emit('afterDataFetched', deepClone(tableData));
 			});
 		}
 
 		function handlePaginationChange(pagination) {
-			getTableData(pagination.current, pagination.pageSize, props.tableConfig, tableMatirials).then((tableData) => {
-				emit("afterDataFetched", deepClone(tableData));
-			});
+			getTableData(pagination.current, pagination.pageSize, props.tableConfig, tableMatirials).then(
+				(tableData) => {
+					emit('afterDataFetched', deepClone(tableData));
+				}
+			);
 		}
 
 		function getSelectedRowKeys() {
@@ -237,8 +247,13 @@ export default defineComponent({
 			clearSelectedRowKeys,
 		});
 		watch(props.tableConfig.queryParams!, () => {
-			getTableData(1, tableMatirials.pagination.value.pageSize, props.tableConfig, tableMatirials).then((tableData) => {
-				emit("afterDataFetched", deepClone(tableData));
+			getTableData(
+				1,
+				tableMatirials.pagination.value.pageSize,
+				props.tableConfig,
+				tableMatirials
+			).then((tableData) => {
+				emit('afterDataFetched', deepClone(tableData));
 			});
 		});
 
@@ -253,11 +268,12 @@ export default defineComponent({
 			);
 		}
 		onMounted(() => {
-			window.addEventListener("resize", adaptWrapper);
+			adaptWrapper();
+			window.addEventListener('resize', adaptWrapper);
 		});
 
 		onBeforeUnmount(() => {
-			window.removeEventListener("resize", adaptWrapper);
+			window.removeEventListener('resize', adaptWrapper);
 		});
 
 		return () => (
