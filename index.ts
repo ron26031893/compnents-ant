@@ -1,0 +1,1 @@
+export {default as AlphaTable, type TableConfig} from './alphaTable'

@@ -2,8 +2,11 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } fro
 import type { PropType, Ref, ComputedRef} from "vue";
 import { message, Table as ATable, TableProps, type TablePaginationConfig } from "ant-design-vue";
 import { usePaginationConfig } from "./hooks/tableHooks";
-import { deepClone } from "./utils/helper";
+import { deepClone, inDevMode } from "../utils";
 import { v4 as uuidv4 } from "uuid";
+if(inDevMode()){
+	console.log('AlphaTable Version v0.1.0')
+}
 interface ScrollConfig {
 	x: number | string | true | undefined;
 	y: number | string | undefined;
