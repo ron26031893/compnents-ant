@@ -1,11 +1,11 @@
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import type { PropType, Ref, ComputedRef} from "vue";
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import type { PropType, Ref, ComputedRef } from "vue";
 import { message, Table as ATable, TableProps, type TablePaginationConfig } from "ant-design-vue";
 import { usePaginationConfig } from "./hooks/tableHooks";
 import { deepClone, inDevMode } from "../utils";
 import { v4 as uuidv4 } from "uuid";
-if(inDevMode()){
-	console.log('AlphaTable Version v0.1.0')
+if (inDevMode()) {
+	console.log("AlphaTable Version v0.1.0");
 }
 interface ScrollConfig {
 	x: number | string | true | undefined;
@@ -196,7 +196,11 @@ export default defineComponent({
 					tableLoading.value = false;
 
 					const length = dataSource.value.length;
-					adaptParentHeight(length, scrollConfig, tableConfig.scrollConfig);
+
+					//throw adapt method into next tick
+					nextTick(() => {
+						adaptParentHeight(length, scrollConfig, tableConfig.scrollConfig);
+					});
 
 					return dataSource.value;
 				})
@@ -223,6 +227,9 @@ export default defineComponent({
 			});
 		}
 
+		function getDataSource() {
+			return deepClone(tableMatirials.dataSource.value);
+		}
 		function getSelectedRowKeys() {
 			return deepClone(tableMatirials.rowSelection.value?.selectedRowKeys.value);
 		}
@@ -235,7 +242,7 @@ export default defineComponent({
 		reloadTableData();
 		expose({
 			reloadTableData,
-			dataSource: deepClone(tableMatirials.dataSource.value),
+			getDataSource,
 			getSelectedRowKeys,
 			clearSelectedRowKeys,
 		});
