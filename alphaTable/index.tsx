@@ -154,7 +154,7 @@ export default defineComponent({
 			const { fetchTableData, queryParams, additionalParam, before, after } = tableConfig;
 			const { tableLoading, dataSource, pagination, scrollConfig } = tableMatirials;
 			tableLoading.value = true;
-			return fetchTableData({ ...queryParams, current, pageSize }, additionalParam)
+			return fetchTableData({ ...queryParams, current, size:pageSize }, additionalParam)
 				.then((response) => {
 					const whereis = props.tableConfig.whereis || "rows";
 					pagination.value.current = current;
