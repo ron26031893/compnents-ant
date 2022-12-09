@@ -149,7 +149,7 @@ export default defineComponent({
 			tableMatirials: TableMatirials
 		): Promise<any> {
 			if (!tableConfig.fetchTableData) {
-				return Promise.reject("未传递获取表格数据API调用函数");
+				return Promise.reject("未传递获取表格数据的函数");
 			}
 			const { fetchTableData, queryParams, additionalParam, before, after } = tableConfig;
 			const { tableLoading, dataSource, pagination, scrollConfig } = tableMatirials;
