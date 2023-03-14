@@ -110,7 +110,8 @@ export default defineComponent({
 				return;
 			}
 			adapting = true;
-			const antTableCellHeight = document.querySelectorAll(`[id='${uuid}'] .ant-table-cell`)?.[0]?.clientHeight || 57;
+			const antTableCellHeight =
+				document.querySelectorAll(`[id='${uuid}'] [data-row-key] .ant-table-cell`)?.[0]?.clientHeight || 57;
 			const totalHeight = dataLength * antTableCellHeight; //表格每一行的高度是antTableCellHeight
 			if (table.value && totalHeight) {
 				const parentNode = table.value.parentNode;
@@ -149,12 +150,12 @@ export default defineComponent({
 			tableMatirials: TableMatirials
 		): Promise<any> {
 			if (!tableConfig.fetchTableData) {
-				return Promise.reject("未传递获取表格数据的函数");
+				return Promise.reject("未传递获取表格数据API调用函数");
 			}
 			const { fetchTableData, queryParams, additionalParam, before, after } = tableConfig;
 			const { tableLoading, dataSource, pagination, scrollConfig } = tableMatirials;
 			tableLoading.value = true;
-			return fetchTableData({ ...queryParams, current, size:pageSize }, additionalParam)
+			return fetchTableData({ ...queryParams, current, pageSize }, additionalParam)
 				.then((response) => {
 					const whereis = props.tableConfig.whereis || "rows";
 					pagination.value.current = current;
@@ -178,7 +179,6 @@ export default defineComponent({
 
 					if (!tableData) {
 						console.error(`AlphaTable: 无法从指定位置(${whereis || "rows"})找到列表数据`);
-						tableLoading.value = false;
 						return;
 					}
 
@@ -192,9 +192,6 @@ export default defineComponent({
 					if (after) {
 						after(deepClone(tableData));
 					}
-
-					tableLoading.value = false;
-
 					const length = dataSource.value.length;
 
 					//throw adapt method into next tick
@@ -204,9 +201,11 @@ export default defineComponent({
 
 					return dataSource.value;
 				})
-				.catch((msg) => {
-					message.error(msg);
-					return Promise.reject(msg);
+				.catch(() => {
+					return Promise.reject(undefined);
+				})
+				.finally(() => {
+					tableLoading.value = false;
 				});
 		}
 

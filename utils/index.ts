@@ -1,3 +1,5 @@
+import { Modal } from "ant-design-vue";
+
 export function deepClone(obj, cleanMode = false) {
 	if (!obj) {
 		console.error("deepClone: 参数为undefined | Null");
@@ -37,4 +39,24 @@ export function deepClone(obj, cleanMode = false) {
 
 export function inDevMode() {
 	return import.meta.env.MODE === "development";
+}
+
+export function errorModal(title, errorMsg) {
+	Modal.error({
+		title,
+		content: errorMsg,
+		centered: true,
+		onOk() {
+			Modal.destroyAll();
+		},
+		onCancel() {
+			Modal.destroyAll();
+		},
+	});
+}
+
+export function printLogInDevMode(logMsg) {
+	if (inDevMode()) {
+		console.log(logMsg);
+	}
 }
