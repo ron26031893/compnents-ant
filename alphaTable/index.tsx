@@ -1,9 +1,10 @@
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { PropType, Ref, ComputedRef } from 'vue';
-import { message, Table as ATable, TableProps, type TablePaginationConfig } from 'ant-design-vue';
+import { Table as ATable, type TablePaginationConfig } from 'ant-design-vue';
 import { usePaginationConfig } from './hooks/tableHooks';
 import { deepClone, inDevMode } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
+import tableStyle from './style/index.module.less';
 if (inDevMode()) {
   console.log('AlphaTable Version v0.1.0');
 }
@@ -40,13 +41,6 @@ interface TableMatirials {
   columns: ComputedRef<any>;
   scrollConfig: Ref<ScrollConfig | undefined>;
   tableLoading: Ref<Boolean>;
-}
-
-function print(...arg): void {
-  console.log(...arg);
-}
-function printDir(...arg): void {
-  console.dir(...arg);
 }
 
 export default defineComponent({
@@ -262,7 +256,7 @@ export default defineComponent({
     });
 
     return () => (
-      <div ref={table} id={uuid}>
+      <div ref={table} id={uuid} class={tableStyle.transition}>
         <ATable
           rowKey={props.tableConfig.rowKey}
           columns={tableMatirials.columns.value}
