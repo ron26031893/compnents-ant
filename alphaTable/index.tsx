@@ -254,7 +254,15 @@ export default defineComponent({
     onBeforeUnmount(() => {
       window.removeEventListener('resize', adaptWrapper);
     });
-
+    function realStr(text) {
+      return typeof text === 'string' && text && text.length;
+    }
+    function handleEmptyStr(text) {
+      if (realStr(text)) {
+        return text;
+      }
+      return '-';
+    }
     return () => (
       <div ref={table} id={uuid} class={tableStyle.transition}>
         <ATable
@@ -268,10 +276,15 @@ export default defineComponent({
           rowSelection={tableMatirials.rowSelection.value}>
           {{
             bodyCell: ({ text, record, index, column }) => {
+              let result: any = text;
               if (slots?.default) {
-                return slots.default({ text, column, record, reloadTableData });
+                result = slots.default({ text, column, record, reloadTableData });
+                console.log('result :>> ', result);
+                if (typeof result[0].children !== 'object') {
+                  result = handleEmptyStr(text);
+                }
               }
-              return text;
+              return result;
             },
           }}
         </ATable>
