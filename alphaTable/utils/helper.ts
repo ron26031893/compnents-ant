@@ -7,14 +7,14 @@ import { TableProps } from 'ant-design-vue';
  * @param needActions 需不需要操作列, 默认需要
  * @returns
  */
-export function generateColumns(arr: Array<any[]>, columnHandler = (column)=>column, needActions: boolean = true): any[] {
+export function generateColumns(arr: Array<any[]>, columnHandler = (column) => column, needActions: boolean = true): any[] {
   const result: Object[] = [];
   arr.forEach((v, index) => {
     const temp = columnHandler({
       dataIndex: v[0],
       title: v[1],
       key: v[0],
-      align: 'center',
+      align: 'left',
       fixed: index === 0 ? 'left' : undefined,
     });
 
@@ -25,12 +25,14 @@ export function generateColumns(arr: Array<any[]>, columnHandler = (column)=>col
   });
 
   needActions &&
-    result.push({
-      key: 'actions',
-      title: '操作',
-      align: 'center',
-      fixed: 'right',
-    });
+    result.push(
+      columnHandler({
+        key: 'actions',
+        title: '操作',
+        align: 'left',
+        fixed: 'right',
+      })
+    );
 
   return result;
 }
