@@ -279,7 +279,6 @@ export default defineComponent({
               let result: any = text;
               if (slots?.default) {
                 result = slots.default({ text, column, record, reloadTableData });
-                console.log('result :>> ', result);
                 if (typeof result[0].children !== 'object') {
                   result = handleEmptyStr(text);
                 }
