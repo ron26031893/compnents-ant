@@ -16,6 +16,7 @@ export function generateColumns(arr: Array<any[]>, columnHandler = (column) => c
       key: v[0],
       align: 'left',
       fixed: index === 0 ? 'left' : undefined,
+      ellipse: true,
     });
 
     if (v[0] instanceof Array) {
