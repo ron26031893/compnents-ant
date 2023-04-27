@@ -153,7 +153,7 @@ export default defineComponent({
           const whereis = props.tableConfig.whereis || 'rows';
           pagination.value.current = current;
           pagination.value.pageSize = pageSize;
-          pagination.value.total = response.total;
+          // pagination.value.total = response.total;
           let tableData;
           if (whereis) {
             if (typeof whereis === 'object' && whereis instanceof Array) {
@@ -178,6 +178,15 @@ export default defineComponent({
           if (before) {
             tableData = before(tableData);
           }
+          pagination.value.total = (function getTotal(src: any[]) {
+            let result: any = src.length;
+            src.forEach((v) => {
+              if (v.children?.length) {
+                result += getTotal(v.children);
+              }
+            });
+            return result;
+          })(tableData);
           dataSource.value.splice(0);
           tableData.forEach((v) => {
             dataSource.value.push(v);
